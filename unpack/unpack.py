@@ -1,31 +1,7 @@
-import requests
 import struct
 import base64
-from requests.exceptions import HTTPError
-
-
-# get the base64-encoded pack of bytes
-def get_bytes():
-    URL: str = "https://hackattic.com/challenges/help_me_unpack/problem?access_token=b5a60cc0b43768a6"
-    try:
-        response = requests.get(URL)
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f"HTTP error occured: {http_err}")
-    except Exception as err:
-        print(f"Other error occured: {err}")
-    else:
-        data = response.json()
-        return data
-
-# get the bytes from json
-b = get_bytes().get("bytes", "")
-# decode to base64
-base64_decoded = base64.b64decode(b)
-
-s_int, u_int, s_short, s_float, s_double = struct.unpack("<iIhxxfd", base64_decoded[:24])
-
-network_double, = struct.unpack("!d", base64_decoded[24:32])
+import requests
+from helpers import get_bytes
 
 def post_bytes():
     URL = "https://hackattic.com/challenges/help_me_unpack/solve?access_token=b5a60cc0b43768a6"
@@ -44,8 +20,22 @@ def post_bytes():
     print(response.status_code)
     return response.json()
 
-result = post_bytes()
-print(result)
+if __name__ == "__main__":
+    url: str = "https://hackattic.com/challenges/help_me_unpack/problem?access_token=b5a60cc0b43768a6"
+    # get the bytes from json
+    b = get_bytes(url).get("bytes", "")
+    # decode to base64
+    base64_decoded = base64.b64decode(b)
+
+    # note that everything is in the context of 32-bit platform, and an int is 4-bytes.
+    # "xx" was used as format string to skip 2 bytes to be used as padding
+    # since the next type is going to be 8-bytes.
+    # 4 + 4 + 2 = 10,
+    s_int, u_int, s_short, s_float, s_double = struct.unpack("<iIhxxfd", base64_decoded[:24])
+
+    network_double, = struct.unpack("!d", base64_decoded[24:32])
+    result = post_bytes()
+    print(result)
 
 
 
