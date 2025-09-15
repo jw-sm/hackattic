@@ -30,7 +30,6 @@ if __name__ == "__main__":
     alive: list[str] = []
     if match:
         copy_data = match.group(1).strip().splitlines()
-        print(copy_data)
         headers = [
             "id",
             "name",
@@ -51,12 +50,11 @@ if __name__ == "__main__":
                 alive.append(values[ssn_index])
 
     data = {"alive_ssns": alive}
-
     URL = "https://hackattic.com/challenges/backup_restore/solve?access_token=b5a60cc0b43768a6"
     headers = {"Content-Type": "application/json"}
+    params = {"playground": 1}
     try:
-        response = requests.post(URL, json=data, headers=headers)
-        print(response.status_code)
+        response = requests.post(URL, json=data, params=params, headers=headers)
         print(response.text)
     except Exception as e:
         print(f"Error: {e}")
