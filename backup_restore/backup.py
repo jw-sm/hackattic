@@ -30,6 +30,7 @@ if __name__ == "__main__":
     alive: list[str] = []
     if match:
         copy_data = match.group(1).strip().splitlines()
+        print(copy_data)
         headers = [
             "id",
             "name",
