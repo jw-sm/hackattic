@@ -1,6 +1,7 @@
 from requests.exceptions import HTTPError
 import requests
 
+
 # get the base64-encoded pack of bytes
 def get_bytes(url: str):
     try:
